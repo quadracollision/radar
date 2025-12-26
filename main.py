@@ -5,6 +5,7 @@ import sys
 from sorter import sort_pdf_pages
 from stamper import extract_all_items, write_location_to_pdf
 from preorder_marker import mark_preorders
+from label_sorter import sort_shipping_labels
 
 # --- Configuration ---
 DATABASE_FILE = "packing_list_database.csv"
@@ -70,6 +71,14 @@ def main():
 
     print(f"\nProcessing file: {pdf_path}")
     
+    # Check if this is a shipping labels file (for thermal printers)
+    if "shipping" in pdf_path.lower() and "label" in pdf_path.lower():
+        print("\n--- Detected Shipping Labels PDF ---")
+        sort_shipping_labels(pdf_path)
+        print("\nShipping labels sorted by order number. Done!")
+        return
+    
+    # Otherwise, process as packing slips
     # Sort the PDF pages first
     sort_pdf_pages(pdf_path)
 
