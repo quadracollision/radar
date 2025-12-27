@@ -6,6 +6,7 @@ from sorter import sort_pdf_pages
 from stamper import extract_all_items, write_location_to_pdf
 from preorder_marker import mark_preorders
 from label_sorter import sort_shipping_labels
+import tkinter as tk
 
 # --- Configuration ---
 DATABASE_FILE = "packing_list_database.csv"
@@ -28,9 +29,11 @@ def select_pdf_file():
         
     while True:
         try:
-            choice = input("Enter the number of the PDF to load (or 'q' to quit): ")
+            choice = input("Enter the number of the PDF to load (or 'q' to quit, 'e' to edit database): ")
             if choice.lower() == 'q':
                 return None
+            if choice.lower() == 'e':
+                return "EDIT_DATABASE"
             
             index = int(choice) - 1
             
@@ -65,6 +68,19 @@ def main():
     # 2. Get Input and Process PDF
     pdf_path = select_pdf_file()
     
+    if pdf_path == "EDIT_DATABASE":
+        print("\nLaunching Database Editor...")
+        try:
+             import database_editor
+             root = tk.Tk()
+             app = database_editor.DatabaseEditorApp(root)
+             root.mainloop()
+        except ImportError:
+             print("ERROR: Could not import database_editor module.")
+        except Exception as e:
+             print(f"ERROR launching editor: {e}")
+        return
+
     if pdf_path is None:
         print("Process aborted.")
         return
